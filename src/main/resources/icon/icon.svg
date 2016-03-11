@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   id="svg4729"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/home/kamil/Pulpit/projekty/java/FreeSnap/resources/icon/128.png"
+   inkscape:export-xdpi="360"
+   inkscape:export-ydpi="360">
+  <defs
+     id="defs4731" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.4"
+     inkscape:cx="20.772883"
+     inkscape:cy="14.5273"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     inkscape:window-x="1440"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid5277" />
+    <sodipodi:guide
+       position="2,42"
+       orientation="1,0"
+       id="guide4141" />
+    <sodipodi:guide
+       position="12,30"
+       orientation="0,1"
+       id="guide4143" />
+    <sodipodi:guide
+       position="30,22"
+       orientation="1,0"
+       id="guide4145" />
+    <sodipodi:guide
+       position="13,2"
+       orientation="0,1"
+       id="guide4147" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata4734">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1020.3622)">
+    <rect
+       style="fill:none;stroke-width:17.44940186"
+       id="rect3535"
+       width="31.762501"
+       height="31.762501"
+       x="0.38660675"
+       y="1015.6149"
+       inkscape:export-filename="/home/kamil/Pulpit/projekty/java/FreeSnap/resources/icon/512.png"
+       inkscape:export-xdpi="219.42857"
+       inkscape:export-ydpi="219.42857" />
+    <g
+       id="g8322">
+      <path
+         sodipodi:nodetypes="ccccccccc"
+         inkscape:connector-curvature="0"
+         id="path8284"
+         d="m 0.94131236,1031.4187 7.61577754,0 0.7202817,-4.4641 12.9650684,0 0.528207,4.4641 8.288041,0 0,16.7603 -30.11737564,-0.099 z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#ff0000;stroke-width:1.3147676;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <circle
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path8288"
+       cx="16"
+       cy="1038.3622"
+       r="4.9642859" />
+    <circle
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path8288-3"
+       cx="16"
+       cy="1038.3622"
+       r="3.5803571" />
+    <rect
+       style="fill:#f9f9f9;fill-opacity:1;stroke:none;stroke-width:1.39999998;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect8320"
+       width="6.9821429"
+       height="2.9821429"
+       x="22.625"
+       y="1033.2728"
+       rx="0.46547619"
+       ry="0.59642857" />
+  </g>
+</svg>

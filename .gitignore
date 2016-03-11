@@ -1,0 +1,8 @@
+.idea/
+.idea/*
+out/
+out/*
+target/
+target/*
+src/manifest/*
+FreeSnap.iml
