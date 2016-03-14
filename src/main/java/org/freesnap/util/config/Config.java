@@ -35,6 +35,7 @@ public class Config {
     private int colorG;
     private int colorB;
     private int size;
+    private String savePath;
     private Preferences prefs;
 
     public Config() {
@@ -53,6 +54,7 @@ public class Config {
         setColorG(prefs.getInt("colorG", 0));
         setColorB(prefs.getInt("colorB", 0));
         setSize(prefs.getInt("size", 8));
+        setSavePath(prefs.get("savePath", System.getProperty("user.dir")));
 
     }
 
@@ -67,6 +69,7 @@ public class Config {
         prefs.putInt("colorG", colorG);
         prefs.putInt("colorB", colorB);
         prefs.putInt("size", size);
+        prefs.put("savePath", savePath);
         try {
             prefs.flush();
         } catch (BackingStoreException e) {
@@ -153,5 +156,13 @@ public class Config {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public String getSavePath() {
+        return savePath;
+    }
+
+    public void setSavePath(String savePath) {
+        this.savePath = savePath;
     }
 }
