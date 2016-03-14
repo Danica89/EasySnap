@@ -37,6 +37,7 @@ public class SettingsShell {
     private Text passwordField;
     private Text directoryField;
     private Text urlField;
+    private Text savePathField;
 
     public SettingsShell(Config config) {
         this.config = config;
@@ -56,7 +57,7 @@ public class SettingsShell {
         this.shell.setImages(FreeSnap.getIconManager().getIconImages());
         this.shell.setMinimumSize(300, 100);
         GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
+        layout.numColumns = 3;
         layout.marginLeft = 5;
         layout.marginRight = 5;
         this.shell.setLayout(layout);
@@ -70,6 +71,7 @@ public class SettingsShell {
 
     private void prepareForm() {
         GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        data.horizontalSpan = 2;
 
         Label serverLabel = new Label(this.shell, SWT.RIGHT);
         serverLabel.setText("Server: ");
@@ -96,11 +98,36 @@ public class SettingsShell {
         this.urlField = new Text(this.shell, SWT.SINGLE | SWT.BORDER);
         this.urlField.setLayoutData(data);
 
+        data= new GridData(SWT.FILL, SWT.CENTER, true, false);
+        data.horizontalSpan = 1;
+        Label savePathLabel = new Label(this.shell, SWT.RIGHT);
+        savePathLabel.setText("Save path: ");
+        this.savePathField = new Text(this.shell, SWT.SINGLE | SWT.BORDER);
+        this.savePathField.setLayoutData(data);
+
+        Button selectSavePathButton = new Button(this.shell, SWT.PUSH | SWT.RIGHT);
+        selectSavePathButton.setText("...");
+        selectSavePathButton.setToolTipText("select");
+        selectSavePathButton.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                DirectoryDialog dialog = new DirectoryDialog(shell);
+                String directory = dialog.open();
+                config.setSavePath(directory);
+                loadConfiguration();
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+
+            }
+        });
+
         Button testButton = new Button(this.shell, SWT.PUSH | SWT.RIGHT);
         testButton.setText("Test connection");
 
         data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-        data.horizontalSpan = 2;
+        data.horizontalSpan = 3;
         testButton.setLayoutData(data);
         testButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
@@ -116,7 +143,7 @@ public class SettingsShell {
         });
 
         data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-        data.horizontalSpan = 2;
+        data.horizontalSpan = 3;
 
         Button okButton = new Button(this.shell, SWT.PUSH | SWT.CENTER);
         okButton.setText("Save");
@@ -150,6 +177,7 @@ public class SettingsShell {
         passwordField.setText(config.getFtpPassword());
         directoryField.setText(config.getFtpDirectory());
         urlField.setText(config.getUrl());
+        savePathField.setText(config.getSavePath());
     }
 
     private void saveConfiguration() {
@@ -158,6 +186,7 @@ public class SettingsShell {
         config.setFtpPassword(passwordField.getText());
         config.setFtpDirectory(directoryField.getText());
         config.setUrl(urlField.getText());
+        config.setSavePath(config.getSavePath());
         config.save();
     }
 }

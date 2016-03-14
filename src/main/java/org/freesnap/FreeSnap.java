@@ -219,9 +219,10 @@ public class FreeSnap {
         String filename = dateFormat.format(Calendar.getInstance().getTime()) + ".png";
         ImageLoader loader = new ImageLoader();
         loader.data = new ImageData[]{image.getImageData()};
-        loader.save(filename, SWT.IMAGE_PNG);
+        String outputFilename = config.getSavePath() + "/" + filename;
+        loader.save(outputFilename, SWT.IMAGE_PNG);
 
-        return new File(filename);
+        return new File(outputFilename);
     }
 
     private static String generateHashForFile(File file) {
