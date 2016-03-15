@@ -1,20 +1,20 @@
 /*
- * FreeSnap - multiplatform desktop application to take screenshots.
+ * FreeSnap - multiplatform desktop application, allows to make, edit and share screenshots.
  *
- *  Copyright (C) 2016 Kamil Karkus
+ * Copyright (C) 2016 Kamil Karkus
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.freesnap.main.shell.capturetool;
@@ -25,8 +25,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.*;
-import org.freesnap.FreeSnap;
-import org.freesnap.util.image.Helper;
+import org.freesnap.util.image.ImageHelper;
+import org.freesnap.util.processor.Processor;
 import org.freesnap.util.video.Encoder;
 
 import java.io.File;
@@ -46,8 +46,10 @@ public class VideoCaptureTool extends AbstractCaptureTool {
     private ArrayList<org.eclipse.swt.graphics.Image> frames;
     private int frameTimeInMs;
     private int i = 0;
+    private Processor processor;
 
-    public VideoCaptureTool() {
+    public VideoCaptureTool(Processor processor) {
+        this.processor = processor;
         init();
     }
 
@@ -135,8 +137,8 @@ public class VideoCaptureTool extends AbstractCaptureTool {
 
     private void startRecording() throws IOException {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        final String fileName = dateFormat.format(Calendar.getInstance().getTime()) + ".mp4";
-        final File out = new File(fileName);
+        final String filename = dateFormat.format(Calendar.getInstance().getTime()) + ".mp4";
+        final File out = new File(filename);
         final Encoder encoder = new Encoder(out, rect.width, rect.height);
         final long startTimeInMs = System.currentTimeMillis();
 
@@ -165,7 +167,7 @@ public class VideoCaptureTool extends AbstractCaptureTool {
                 } else {
                     for (Image frame : frames) {
                         try {
-                            encoder.encodeImage(Helper.convertToAWT(frame.getImageData()));
+                            encoder.encodeImage(ImageHelper.convertToAWT(frame.getImageData()));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -176,7 +178,14 @@ public class VideoCaptureTool extends AbstractCaptureTool {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    FreeSnap.processVideo(out.getName(), upload);
+                    if (upload) {
+                        processor.upload(out.getAbsolutePath());
+                        if (!out.delete()) {
+                            System.err.println("Could not delete tmp file: " + out.getAbsolutePath());
+                        }
+                    } else {
+                        processor.save(out.getAbsolutePath());
+                    }
                 }
             }
         };

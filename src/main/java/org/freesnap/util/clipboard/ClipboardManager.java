@@ -1,20 +1,20 @@
 /*
- * FreeSnap - multiplatform desktop application to take screenshots.
+ * FreeSnap - multiplatform desktop application, allows to make, edit and share screenshots.
  *
- *  Copyright (C) 2016 Kamil Karkus
+ * Copyright (C) 2016 Kamil Karkus
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.freesnap.util.clipboard;
@@ -22,7 +22,7 @@ package org.freesnap.util.clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
-import org.freesnap.util.image.Helper;
+import org.freesnap.util.image.ImageHelper;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -30,9 +30,9 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-public class Clipboard {
+public class ClipboardManager {
 
-    public Clipboard() {
+    public ClipboardManager() {
     }
 
     public void setContent(String content) {
@@ -43,7 +43,7 @@ public class Clipboard {
     }
 
     public void setImage(org.eclipse.swt.graphics.Image image) {
-        ImageSelection imgSel = new ImageSelection(Helper.convertToAWT(image.getImageData()));
+        ImageSelection imgSel = new ImageSelection(ImageHelper.convertToAWT(image.getImageData()));
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);
     }
 

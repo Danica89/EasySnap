@@ -1,20 +1,20 @@
 /*
- * FreeSnap - multiplatform desktop application to take screenshots.
+ * FreeSnap - multiplatform desktop application, allows to make, edit and share screenshots.
  *
- *  Copyright (C) 2016 Kamil Karkus
+ * Copyright (C) 2016 Kamil Karkus
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.freesnap.main.shell.capturetool;
@@ -26,11 +26,12 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.freesnap.FreeSnap;
 import org.freesnap.main.shell.capturetool.imagedrawtool.AbstractDrawTool;
 import org.freesnap.main.shell.capturetool.imagedrawtool.keyboard.TextDrawTool;
 import org.freesnap.main.shell.capturetool.imagedrawtool.mouse.*;
 import org.freesnap.util.config.Config;
+import org.freesnap.util.icon.IconManager;
+import org.freesnap.util.processor.Processor;
 import org.freesnap.util.resource.ResourceManager;
 
 import java.util.ArrayList;
@@ -52,9 +53,13 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     private DrawToolManager drawToolManager;
     private Cursor cursor;
     private Config config;
+    private IconManager iconManager;
+    private Processor processor;
 
-    public ImageCaptureTool(Config config) {
+    public ImageCaptureTool(Config config, IconManager iconManager, Processor processor) {
         this.config = config;
+        this.iconManager = iconManager;
+        this.processor = processor;
         this.color = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
         this.size = 8;
         this.historyManager = new HistoryManager();
@@ -129,7 +134,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         this.shell.setLayout(layout);
         this.shell.setMinimumSize(400, 200);
         this.shell.setText("FreeSnap");
-        this.shell.setImages(FreeSnap.getIconManager().getIconImages());
+        this.shell.setImages(iconManager.getIconImages());
     }
 
     private void setupShellListeners() {
@@ -212,7 +217,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         size.addSelectionListener(sizeSelectionListener);
 
         ToolItem text = new ToolItem(bottomToolBar, SWT.RADIO);
-        text.setImage(FreeSnap.getIconManager().getTextImage());
+        text.setImage(iconManager.getTextImage());
         text.setToolTipText("Text");
         text.setWidth(32);
         text.addSelectionListener(new SelectionListener() {
@@ -227,7 +232,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem arrow = new ToolItem(bottomToolBar, SWT.RADIO);
-        arrow.setImage(FreeSnap.getIconManager().getArrowImage());
+        arrow.setImage(iconManager.getArrowImage());
         arrow.setToolTipText("Arrow");
         arrow.addSelectionListener(new SelectionListener() {
             @Override
@@ -241,7 +246,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem pencil = new ToolItem(bottomToolBar, SWT.RADIO);
-        pencil.setImage(FreeSnap.getIconManager().getPencilImage());
+        pencil.setImage(iconManager.getPencilImage());
         pencil.setToolTipText("Pencil");
         pencil.addSelectionListener(new SelectionListener() {
             @Override
@@ -255,7 +260,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem line = new ToolItem(bottomToolBar, SWT.RADIO);
-        line.setImage(FreeSnap.getIconManager().getLineImage());
+        line.setImage(iconManager.getLineImage());
         line.setToolTipText("Line");
         line.addSelectionListener(new SelectionListener() {
             @Override
@@ -269,7 +274,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem rectangle = new ToolItem(bottomToolBar, SWT.RADIO);
-        rectangle.setImage(FreeSnap.getIconManager().getRectangleImage());
+        rectangle.setImage(iconManager.getRectangleImage());
         rectangle.setToolTipText("Rectangle");
         rectangle.addSelectionListener(new SelectionListener() {
             @Override
@@ -283,7 +288,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem ellipse = new ToolItem(bottomToolBar, SWT.RADIO);
-        ellipse.setImage(FreeSnap.getIconManager().getEllipseImage());
+        ellipse.setImage(iconManager.getEllipseImage());
         ellipse.setToolTipText("Ellipse");
         ellipse.addSelectionListener(new SelectionListener() {
             @Override
@@ -297,7 +302,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem blur = new ToolItem(bottomToolBar, SWT.RADIO);
-        blur.setImage(FreeSnap.getIconManager().getBlurImage());
+        blur.setImage(iconManager.getBlurImage());
         blur.setToolTipText("Blur");
         blur.addSelectionListener(new SelectionListener() {
             @Override
@@ -311,7 +316,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem tile = new ToolItem(bottomToolBar, SWT.RADIO);
-        tile.setImage(FreeSnap.getIconManager().getTileImage());
+        tile.setImage(iconManager.getTileImage());
         tile.setToolTipText("Tile Effect");
         tile.addSelectionListener(new SelectionListener() {
             @Override
@@ -325,7 +330,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         });
 
         ToolItem crop = new ToolItem(bottomToolBar, SWT.RADIO);
-        crop.setImage(FreeSnap.getIconManager().getCropImage());
+        crop.setImage(iconManager.getCropImage());
         crop.setToolTipText("Crop Image");
         crop.addSelectionListener(new SelectionListener() {
             @Override
@@ -426,7 +431,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         save.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                FreeSnap.processImage(ImageCaptureTool.this.image, false);
+                processor.save(ImageCaptureTool.this.image);
                 shell.dispose();
             }
 
@@ -439,7 +444,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         upload.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                FreeSnap.processImage(ImageCaptureTool.this.image, true);
+                processor.upload(ImageCaptureTool.this.image);
                 shell.dispose();
             }
 
@@ -453,7 +458,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         copyToClipboard.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                FreeSnap.processImageToClipboard(image);
+                processor.clipboard(image);
                 shell.dispose();
             }
 

@@ -1,29 +1,31 @@
 /*
- * FreeSnap - multiplatform desktop application to take screenshots.
+ * FreeSnap - multiplatform desktop application, allows to make, edit and share screenshots.
  *
- *  Copyright (C) 2016 Kamil Karkus
+ * Copyright (C) 2016 Kamil Karkus
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.freesnap.main.listener;
 
 import org.eclipse.swt.widgets.Display;
-import org.freesnap.FreeSnap;
 import org.freesnap.main.shell.ScreenSelectorShell;
 import org.freesnap.main.shell.capturetool.ImageCaptureTool;
 import org.freesnap.main.shell.capturetool.VideoCaptureTool;
+import org.freesnap.util.config.Config;
+import org.freesnap.util.icon.IconManager;
+import org.freesnap.util.processor.Processor;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -35,8 +37,14 @@ import java.util.logging.Logger;
 
 public class GlobalKeyListener implements NativeKeyListener {
     private static ScreenSelectorShell screenSelectorShell;
+    private static Config config;
+    private static IconManager iconManager;
+    private static Processor processor;
 
-    public static void init() {
+    public static void init(Config config, IconManager iconManager, Processor processor) {
+        setConfig(config);
+        setIconManager(iconManager);
+        setProcessor(processor);
         setupLogs();
         try {
             GlobalScreen.registerNativeHook();
@@ -67,6 +75,18 @@ public class GlobalKeyListener implements NativeKeyListener {
         }
     }
 
+    private static void setConfig(Config config) {
+        GlobalKeyListener.config = config;
+    }
+
+    private static void setProcessor(Processor processor) {
+        GlobalKeyListener.processor = processor;
+    }
+
+    private static void setIconManager(IconManager iconManager) {
+        GlobalKeyListener.iconManager = iconManager;
+    }
+
     public void nativeKeyPressed(NativeKeyEvent e) {
         if (e.getKeyCode() == NativeKeyEvent.VC_PRINTSCREEN
                 && ((e.getModifiers() & NativeKeyEvent.SHIFT_L_MASK) == NativeKeyEvent.SHIFT_L_MASK ||
@@ -75,7 +95,7 @@ public class GlobalKeyListener implements NativeKeyListener {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    screenSelectorShell.setPanel(new VideoCaptureTool());
+                    screenSelectorShell.setPanel(new VideoCaptureTool(processor));
                     screenSelectorShell.open();
                 }
             });
@@ -86,7 +106,7 @@ public class GlobalKeyListener implements NativeKeyListener {
                 Display.getDefault().asyncExec(new Runnable() {
                     @Override
                     public void run() {
-                        ImageCaptureTool imageCaptureTool = new ImageCaptureTool(FreeSnap.getConfig());
+                        ImageCaptureTool imageCaptureTool = new ImageCaptureTool(config, iconManager, processor);
                         imageCaptureTool.open(Display.getDefault().getBounds());
                     }
                 });
@@ -95,7 +115,7 @@ public class GlobalKeyListener implements NativeKeyListener {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    screenSelectorShell.setPanel(new ImageCaptureTool(FreeSnap.getConfig()));
+                    screenSelectorShell.setPanel(new ImageCaptureTool(config, iconManager, processor));
                     screenSelectorShell.open();
                 }
             });

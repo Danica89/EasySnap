@@ -1,20 +1,20 @@
 /*
- * FreeSnap - multiplatform desktop application to take screenshots.
+ * FreeSnap - multiplatform desktop application, allows to make, edit and share screenshots.
  *
- *  Copyright (C) 2016 Kamil Karkus
+ * Copyright (C) 2016 Kamil Karkus
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.freesnap.main.shell;
@@ -25,6 +25,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.freesnap.FreeSnap;
+import org.freesnap.util.clipboard.ClipboardManager;
+import org.freesnap.util.icon.IconManager;
+import org.freesnap.util.processor.Processor;
 
 public class TrayIconShell {
     protected Shell shell;
@@ -35,23 +38,32 @@ public class TrayIconShell {
     private TrayItem trayItem;
     private Tray tray;
     private Menu menu;
+    private ClipboardManager clipboardManager;
+    private IconManager iconManager;
+    private Processor processor;
 
-    public TrayIconShell() {
+    public TrayIconShell(ClipboardManager clipboardManager, IconManager iconManager) throws Exception {
+        this.clipboardManager = clipboardManager;
+        this.iconManager = iconManager;
         initShell();
         initImage();
         initTray();
     }
 
-    private void initTray() {
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
+    }
+
+    private void initTray() throws Exception {
         this.tray = Display.getCurrent().getSystemTray();
-        if (this.tray == null) {
+        if (null == this.tray) {
             System.out.println("The system tray is not available");
             return;
         }
         initTrayItem();
     }
 
-    private void initTrayItem() {
+    private void initTrayItem() throws Exception {
         this.trayItem = new TrayItem(tray, SWT.NONE);
         this.trayItem.setImage(this.image);
         this.trayItem.setToolTipText("FreeSnap");
@@ -59,7 +71,7 @@ public class TrayIconShell {
         initMenu();
     }
 
-    private void initMenu() {
+    private void initMenu() throws Exception {
         this.menu = new Menu(this.shell, SWT.POP_UP);
         initMenuFileUploadEntry();
         initMenuHistoryEntry();
@@ -87,7 +99,7 @@ public class TrayIconShell {
         history.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (historyMenu != null) {
+                if (null != historyMenu) {
                     return;
                 }
                 MessageBox messageBox = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
@@ -118,7 +130,7 @@ public class TrayIconShell {
         });
     }
 
-    private void initMenuFileUploadEntry() {
+    private void initMenuFileUploadEntry() throws Exception {
         MenuItem fileUpload = new MenuItem(menu, SWT.PUSH);
         fileUpload.setText("&File upload");
 
@@ -127,7 +139,7 @@ public class TrayIconShell {
                 FileDialog fileDialog = (new FileDialog(shell, SWT.OPEN));
                 fileDialog.setText("Select file to upload");
                 String file = fileDialog.open();
-                FreeSnap.processFile(file);
+                processor.upload(file);
             }
         });
     }
@@ -169,7 +181,7 @@ public class TrayIconShell {
     }
 
     private void initImage() {
-        this.image = FreeSnap.getIconManager().getIconImage(32);
+        this.image = iconManager.getIconImage(32);
     }
 
     private void initShell() {
@@ -212,7 +224,7 @@ public class TrayIconShell {
     }
 
     private MenuItem internalAddHistory(String name, final String url) {
-        if (historyMenu == null) {
+        if (null == historyMenu) {
             historyMenu = new Menu(shell, SWT.DROP_DOWN);
             history.setMenu(historyMenu);
         }
@@ -221,7 +233,7 @@ public class TrayIconShell {
         newHistoryItem.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event event) {
                 TrayIconShell.this.showToolTip("Url copied!", url);
-                FreeSnap.getClipboard().setContent(url);
+                clipboardManager.setContent(url);
             }
         });
         return newHistoryItem;

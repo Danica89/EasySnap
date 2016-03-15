@@ -17,21 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.freesnap.main.shell.capturetool.imagedrawtool.keyboard;
+package org.freesnap.util.tooltip;
 
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.freesnap.main.shell.capturetool.imagedrawtool.AbstractDrawTool;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.ToolTip;
+import org.freesnap.main.shell.TrayIconShell;
 
-abstract class AbstractKeyboardTool extends AbstractDrawTool {
-    AbstractKeyboardTool(Image image, Color color, int size) {
-        super(image, color, size);
+public class ToolTipManager {
+    private TrayIconShell shell;
+
+    public ToolTipManager(TrayIconShell shell) {
+        this.shell = shell;
     }
 
-    abstract public Image onType(KeyEvent event);
+    public void show(String title, String message) {
+        ToolTip tooltip = new ToolTip(shell.getShell(), SWT.BALLOON | SWT.ICON_INFORMATION);
+        tooltip.setText(title);
+        tooltip.setMessage(message);
+        shell.getTrayItem().setToolTip(tooltip);
 
-    abstract public void onUndo();
-
-    abstract public void onRedo();
+        tooltip.setVisible(true);
+        tooltip.setAutoHide(true);
+    }
 }

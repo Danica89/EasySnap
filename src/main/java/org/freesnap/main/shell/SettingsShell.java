@@ -1,20 +1,20 @@
 /*
- * FreeSnap - multiplatform desktop application to take screenshots.
+ * FreeSnap - multiplatform desktop application, allows to make, edit and share screenshots.
  *
- *  Copyright (C) 2016 Kamil Karkus
+ * Copyright (C) 2016 Kamil Karkus
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.freesnap.main.shell;
@@ -25,11 +25,14 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.freesnap.FreeSnap;
 import org.freesnap.util.config.Config;
+import org.freesnap.util.ftp.FtpClient;
+import org.freesnap.util.icon.IconManager;
 
 public class SettingsShell {
     private Config config;
+    private FtpClient client;
+    private IconManager iconManager;
     private Shell shell;
 
     private Text serverField;
@@ -39,8 +42,10 @@ public class SettingsShell {
     private Text urlField;
     private Text savePathField;
 
-    public SettingsShell(Config config) {
+    public SettingsShell(Config config, FtpClient client, IconManager iconManager) {
         this.config = config;
+        this.client = client;
+        this.iconManager = iconManager;
         this.prepareShell();
         this.prepareForm();
         this.loadConfiguration();
@@ -54,7 +59,7 @@ public class SettingsShell {
     private void prepareShell() {
         this.shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM & (~SWT.RESIZE));
         this.shell.setText("FreeSnap Settings");
-        this.shell.setImages(FreeSnap.getIconManager().getIconImages());
+        this.shell.setImages(iconManager.getIconImages());
         this.shell.setMinimumSize(300, 100);
         GridLayout layout = new GridLayout();
         layout.numColumns = 3;
@@ -98,7 +103,7 @@ public class SettingsShell {
         this.urlField = new Text(this.shell, SWT.SINGLE | SWT.BORDER);
         this.urlField.setLayoutData(data);
 
-        data= new GridData(SWT.FILL, SWT.CENTER, true, false);
+        data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.horizontalSpan = 1;
         Label savePathLabel = new Label(this.shell, SWT.RIGHT);
         savePathLabel.setText("Save path: ");
@@ -134,7 +139,7 @@ public class SettingsShell {
                 saveConfiguration();
                 MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
                 messageBox.setText("Status");
-                messageBox.setMessage(FreeSnap.testConnection() ? "Connected!" : "Not connected!");
+                messageBox.setMessage(client.canConnect() ? "Connected!" : "Not connected!");
                 messageBox.open();
             }
 
