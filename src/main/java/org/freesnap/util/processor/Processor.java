@@ -136,21 +136,28 @@ public class Processor {
         return false;
     }
 
-    public boolean save(String filename) {
+    public boolean save(String filename, boolean move) {
         File file = new File(filename);
         if (!file.exists()) {
             System.err.println("File not found: " + filename);
             return false;
         }
-        String outputFilename = config.getSavePath() + "/" + file.getName();
-        if (!file.renameTo(new File(outputFilename))) {
-            System.err.println("Could not rename file: " + filename + " into " + outputFilename);
-            return false;
+        if (move) {
+            String outputFilename = config.getSavePath() + "/" + file.getName();
+            File dest = new File(outputFilename);
+            if (!file.renameTo(dest)) {
+                System.err.println("Could not rename file: " + filename + " into " + outputFilename);
+                return false;
+            }
+            toolTipManager.show("File saved!", dest.getAbsolutePath());
+            shell.addHistory("Saved file: " + dest.getName(), dest.getAbsolutePath());
+            clipboardManager.setContent(dest.getAbsolutePath());
+            return true;
         }
         toolTipManager.show("File saved!", file.getName());
         shell.addHistory("Saved file: " + file.getName(), file.getAbsolutePath());
         clipboardManager.setContent(file.getAbsolutePath());
-        return false;
+        return true;
     }
 
     public boolean clipboard(String file) {

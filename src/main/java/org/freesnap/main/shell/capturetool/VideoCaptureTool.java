@@ -163,7 +163,6 @@ public class VideoCaptureTool extends AbstractCaptureTool {
                     btn.setText((((float) (System.currentTimeMillis() - startTimeInMs)) / (float) 1000) + "s");
                     int delay = (int) (frameTimeInMs - ((System.currentTimeMillis() - frameStartTime)));
                     current.timerExec(Math.max(0, delay), this);
-                    System.out.println(System.currentTimeMillis() + " " + ++i);
                 } else {
                     for (Image frame : frames) {
                         try {
@@ -184,8 +183,9 @@ public class VideoCaptureTool extends AbstractCaptureTool {
                             System.err.println("Could not delete tmp file: " + out.getAbsolutePath());
                         }
                     } else {
-                        processor.save(out.getAbsolutePath());
+                        processor.save(out.getAbsolutePath(), true);
                     }
+                    shell.close();
                 }
             }
         };
