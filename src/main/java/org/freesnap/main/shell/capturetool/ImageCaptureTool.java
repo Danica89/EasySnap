@@ -155,7 +155,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         Image image = new Image(Display.getCurrent(), 24, 24);
         resourceManager.add(image);
         GC gc = new GC(image);
-        gc.setBackground(ImageCaptureTool.this.color);
+        gc.setBackground(color);
         gc.fillRectangle(0, 0, 24, 24);
         gc.dispose();
         return image;
@@ -170,23 +170,22 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     private void setupBottomToolBar() {
         ToolBar bottomToolBar = new ToolBar(this.shell, SWT.WRAP | SWT.RIGHT);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-//        gridData.heightHint = 48;
         bottomToolBar.setLayoutData(gridData);
 
-        final ToolItem color = new ToolItem(bottomToolBar, SWT.PUSH);
-        color.setImage(this.getColorImage());
-        color.setText("Color");
-        color.addSelectionListener(new SelectionListener() {
+        final ToolItem colorBtn = new ToolItem(bottomToolBar, SWT.PUSH);
+        colorBtn.setImage(this.getColorImage());
+        colorBtn.setText("Color");
+        colorBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                ColorDialog colorDialog = new ColorDialog(ImageCaptureTool.this.shell);
+                ColorDialog colorDialog = new ColorDialog(shell);
                 colorDialog.setText("Choose a Color");
                 RGB rgb = colorDialog.open();
                 if (rgb != null) {
-                    ImageCaptureTool.this.color = new Color(Display.getCurrent(), rgb);
-                    ImageCaptureTool.this.drawToolManager.setColor(ImageCaptureTool.this.color);
-                    resourceManager.add(ImageCaptureTool.this.color);
-                    color.setImage(ImageCaptureTool.this.getColorImage());
+                    color = new Color(Display.getCurrent(), rgb);
+                    drawToolManager.setColor(color);
+                    resourceManager.add(color);
+                    colorBtn.setImage(getColorImage());
                     config.setColorR(rgb.red);
                     config.setColorG(rgb.green);
                     config.setColorB(rgb.blue);
@@ -199,9 +198,9 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        final ToolItem size = new ToolItem(bottomToolBar, SWT.DROP_DOWN);
-        size.setText("Size " + this.size);
-        SizeDropDownSelectionListener sizeSelectionListener = new SizeDropDownSelectionListener(size);
+        final ToolItem sizeBtn = new ToolItem(bottomToolBar, SWT.DROP_DOWN);
+        sizeBtn.setText("Size " + this.size);
+        SizeDropDownSelectionListener sizeSelectionListener = new SizeDropDownSelectionListener(sizeBtn);
         for (int i = 1; i < 5; ++i) {
             sizeSelectionListener.add("" + i);
         }
@@ -214,13 +213,13 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         for (int i = 20; i <= 40; i += 10) {
             sizeSelectionListener.add("" + i);
         }
-        size.addSelectionListener(sizeSelectionListener);
+        sizeBtn.addSelectionListener(sizeSelectionListener);
 
-        ToolItem text = new ToolItem(bottomToolBar, SWT.RADIO);
-        text.setImage(iconManager.getTextImage());
-        text.setToolTipText("Text");
-        text.setWidth(32);
-        text.addSelectionListener(new SelectionListener() {
+        ToolItem textBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        textBtn.setImage(iconManager.getTextImage());
+        textBtn.setToolTipText("Text");
+        textBtn.setWidth(32);
+        textBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.TEXT);
@@ -231,10 +230,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem arrow = new ToolItem(bottomToolBar, SWT.RADIO);
-        arrow.setImage(iconManager.getArrowImage());
-        arrow.setToolTipText("Arrow");
-        arrow.addSelectionListener(new SelectionListener() {
+        ToolItem arrowBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        arrowBtn.setImage(iconManager.getArrowImage());
+        arrowBtn.setToolTipText("Arrow");
+        arrowBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.ARROW);
@@ -245,10 +244,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem pencil = new ToolItem(bottomToolBar, SWT.RADIO);
-        pencil.setImage(iconManager.getPencilImage());
-        pencil.setToolTipText("Pencil");
-        pencil.addSelectionListener(new SelectionListener() {
+        ToolItem pencilBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        pencilBtn.setImage(iconManager.getPencilImage());
+        pencilBtn.setToolTipText("Pencil");
+        pencilBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.PENCIL);
@@ -259,10 +258,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem line = new ToolItem(bottomToolBar, SWT.RADIO);
-        line.setImage(iconManager.getLineImage());
-        line.setToolTipText("Line");
-        line.addSelectionListener(new SelectionListener() {
+        ToolItem lineBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        lineBtn.setImage(iconManager.getLineImage());
+        lineBtn.setToolTipText("Line");
+        lineBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.LINE);
@@ -273,10 +272,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem rectangle = new ToolItem(bottomToolBar, SWT.RADIO);
-        rectangle.setImage(iconManager.getRectangleImage());
-        rectangle.setToolTipText("Rectangle");
-        rectangle.addSelectionListener(new SelectionListener() {
+        ToolItem rectangleBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        rectangleBtn.setImage(iconManager.getRectangleImage());
+        rectangleBtn.setToolTipText("Rectangle");
+        rectangleBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.RECTANGLE);
@@ -287,10 +286,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem ellipse = new ToolItem(bottomToolBar, SWT.RADIO);
-        ellipse.setImage(iconManager.getEllipseImage());
-        ellipse.setToolTipText("Ellipse");
-        ellipse.addSelectionListener(new SelectionListener() {
+        ToolItem ellipseBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        ellipseBtn.setImage(iconManager.getEllipseImage());
+        ellipseBtn.setToolTipText("Ellipse");
+        ellipseBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.ELLIPSE);
@@ -301,10 +300,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem blur = new ToolItem(bottomToolBar, SWT.RADIO);
-        blur.setImage(iconManager.getBlurImage());
-        blur.setToolTipText("Blur");
-        blur.addSelectionListener(new SelectionListener() {
+        ToolItem blurBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        blurBtn.setImage(iconManager.getBlurImage());
+        blurBtn.setToolTipText("Blur");
+        blurBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.BLUR);
@@ -315,10 +314,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem tile = new ToolItem(bottomToolBar, SWT.RADIO);
-        tile.setImage(iconManager.getTileImage());
-        tile.setToolTipText("Tile Effect");
-        tile.addSelectionListener(new SelectionListener() {
+        ToolItem tileBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        tileBtn.setImage(iconManager.getTileImage());
+        tileBtn.setToolTipText("Tile Effect");
+        tileBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.TILE);
@@ -329,10 +328,10 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             }
         });
 
-        ToolItem crop = new ToolItem(bottomToolBar, SWT.RADIO);
-        crop.setImage(iconManager.getCropImage());
-        crop.setToolTipText("Crop Image");
-        crop.addSelectionListener(new SelectionListener() {
+        ToolItem cropBtn = new ToolItem(bottomToolBar, SWT.RADIO);
+        cropBtn.setImage(iconManager.getCropImage());
+        cropBtn.setToolTipText("Crop Image");
+        cropBtn.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
                 setDrawTool(DrawToolType.CROP);
@@ -391,11 +390,11 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {
             public void handleEvent(Event e) {
                 if (((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'z')) {
-                    ImageCaptureTool.this.doUndo();
+                    doUndo();
                 }
 
                 if (((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'y')) {
-                    ImageCaptureTool.this.doRedo();
+                    doRedo();
                 }
             }
         });
@@ -406,7 +405,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         undo.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                ImageCaptureTool.this.doUndo();
+                doUndo();
             }
 
             @Override
@@ -418,7 +417,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         redo.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                ImageCaptureTool.this.doRedo();
+                doRedo();
             }
 
             @Override
@@ -431,7 +430,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         save.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                processor.save(ImageCaptureTool.this.image);
+                processor.save(image);
                 shell.dispose();
             }
 
@@ -444,7 +443,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         upload.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent selectionEvent) {
-                processor.upload(ImageCaptureTool.this.image);
+                processor.upload(image);
                 shell.dispose();
             }
 
@@ -509,7 +508,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
                 if (keyEvent.keyCode == SWT.BS) {
-                    if (drawTool instanceof TextDrawTool && ((TextDrawTool) ImageCaptureTool.this.drawTool).canUndo()) {
+                    if (drawTool instanceof TextDrawTool && ((TextDrawTool) drawTool).canUndo()) {
                         doUndo();
                         keyEvent.doit = true;
                         return;
@@ -526,9 +525,9 @@ public class ImageCaptureTool extends AbstractCaptureTool {
                     return;
                 }
 
-                if (ImageCaptureTool.this.drawTool instanceof TextDrawTool) {
+                if (drawTool instanceof TextDrawTool) {
                     try {
-                        image = new Image(Display.getCurrent(), ((TextDrawTool) ImageCaptureTool.this.drawTool).onType(keyEvent), SWT.IMAGE_COPY);
+                        image = new Image(Display.getCurrent(), ((TextDrawTool) drawTool).onType(keyEvent), SWT.IMAGE_COPY);
                         historyManager.add(image);
                         drawTool.setStartImage(image);
                         redrawImage();
@@ -553,7 +552,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
                     return;
                 }
                 if (drawTool instanceof AbstractMouseDrawTool && drawTool.isReady()) {
-                    ImageCaptureTool.this.image = ((AbstractMouseDrawTool) drawTool).onMove(mouseEvent);
+                    image = ((AbstractMouseDrawTool) drawTool).onMove(mouseEvent);
                     redrawImage();
                 }
 
@@ -574,40 +573,26 @@ public class ImageCaptureTool extends AbstractCaptureTool {
                 if (drawTool == null) {
                     return;
                 }
-//                if (drawTool instanceof TextDrawTool) {
-//                    ((TextDrawTool) drawTool).clear();
-////                    ImageCaptureTool.this.buffImage = ImageCaptureTool.this.image;
-////                    ImageCaptureTool.this.image = new Image(ImageCaptureTool.this.display, ImageCaptureTool.this.buffImage, SWT.IMAGE_COPY);
-////                    resources.add(image);
-////                    createNewHistoryEntry(ImageCaptureTool.this.buffImage);
-//                    draw(true);
-//                    return;
-//                }
-
-                ImageCaptureTool.this.image = ImageCaptureTool.this.drawTool.onStart(mouseEvent);
-                resourceManager.add(image);
-                redrawImage();
                 cursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
                 shell.setCursor(cursor);
+                image = drawTool.onStart(mouseEvent);
+                resourceManager.add(image);
+                redrawImage();
             }
 
             @Override
             public void mouseUp(MouseEvent mouseEvent) {
+                if (drawTool == null) {
+                    return;
+                }
                 Cursor oldCursor = cursor;
                 cursor = new Cursor(Display.getCurrent(), SWT.CURSOR_ARROW);
                 shell.setCursor(cursor);
                 if (!oldCursor.isDisposed()) {
                     oldCursor.dispose();
                 }
-                if (drawTool == null) {
-                    return;
-                }
-//                if (ImageCaptureTool.this.drawTool instanceof TextDrawTool) {
-//                    return;
-//                }
-                //TODO: te linijki poniżej są powtarzalne więc refaktor
-                ImageCaptureTool.this.image = ImageCaptureTool.this.drawTool.onFinish(mouseEvent);
-                historyManager.add(ImageCaptureTool.this.image);
+                image = drawTool.onFinish(mouseEvent);
+                historyManager.add(image);
                 redrawImage();
             }
         });
@@ -639,8 +624,8 @@ public class ImageCaptureTool extends AbstractCaptureTool {
                 public void widgetSelected(SelectionEvent event) {
                     MenuItem selected = (MenuItem) event.widget;
                     dropdown.setText("Size " + selected.getText());
-                    ImageCaptureTool.this.setSize(Integer.parseInt(selected.getText()));
-                    ImageCaptureTool.this.drawToolManager.setSize(Integer.parseInt(selected.getText()));
+                    setSize(Integer.parseInt(selected.getText()));
+                    drawToolManager.setSize(Integer.parseInt(selected.getText()));
                 }
             });
         }
