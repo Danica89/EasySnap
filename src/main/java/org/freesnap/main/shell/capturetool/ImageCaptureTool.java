@@ -678,6 +678,9 @@ public class ImageCaptureTool extends AbstractCaptureTool {
             if (list.size() >= getLimit()) {
                 remove(0);
             }
+            if (list.size() > 0 && list.get(list.size() - 1) == image) {
+                return;
+            }
             list.add(image);
             iterator = list.size() - 1;
         }
