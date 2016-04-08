@@ -1,5 +1,5 @@
-# FreeSnap
-MultiOS application to take screenshots or record video. Allows to edit screenshot before upload or save it.
+# EasySnap
+multiplatform desktop application, allows to capture screen as screen or video, edit it and share.
 
 ###Current features
 
