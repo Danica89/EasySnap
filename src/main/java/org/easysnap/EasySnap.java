@@ -29,6 +29,7 @@ import org.easysnap.util.ftp.FtpClient;
 import org.easysnap.util.icon.IconManager;
 import org.easysnap.util.processor.Processor;
 import org.easysnap.util.tooltip.ToolTipManager;
+import org.eclipse.swt.widgets.Monitor;
 
 public class EasySnap {
     private static Config config;
@@ -46,6 +47,7 @@ public class EasySnap {
     }
 
     public static void main(String[] args) throws Exception {
+        Display.setAppName("EasySnap");
         initConfig();
         initClipboardManager();
         initIconManager();
