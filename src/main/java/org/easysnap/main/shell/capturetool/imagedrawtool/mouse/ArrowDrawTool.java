@@ -67,9 +67,7 @@ public class ArrowDrawTool extends AbstractMouseDrawTool {
         transform.rotate((float) angle);
         graphicsContext.setTransform(transform);
 
-        graphicsContext.drawLine(0, 0, len, 0);
-        graphicsContext.fillPolygon(new int[]{0, 0, len, size / 3, len, 0, len, -(size / 3)});
-        graphicsContext.fillPolygon(new int[]{len - 1, 0, len - 1 - size / 2, size, len - 1 + size, 0, len - 1 - size / 2, -size});
+        drawArrow(len, size);
 
         graphicsContext.setLineWidth(lineWidth);
 
@@ -82,11 +80,15 @@ public class ArrowDrawTool extends AbstractMouseDrawTool {
         transform.rotate((float) angle);
         graphicsContext.setTransform(transform);
 
-        graphicsContext.drawLine(0, 0, len, 0);
-        graphicsContext.fillPolygon(new int[]{0, 0, len, size / 3, len, 0, len, -(size / 3)});
-        graphicsContext.fillPolygon(new int[]{len - 1, 0, len - 1 - size / 2, size, len - 1 + size, 0, len - 1 - size / 2, -size});
+        drawArrow(len, size);
 
         graphicsContext.setLineWidth(lineWidth);
         transform.dispose();
+    }
+
+    private void drawArrow(int len, int size) {
+        graphicsContext.drawLine(0, 0, len, 0);
+        graphicsContext.fillPolygon(new int[]{0, 0, len, size / 3, len, 0, len, -(size / 3)});
+        graphicsContext.fillPolygon(new int[]{len - 1, 0, len - 1 - size / 2, size, len - 1 + size, 0, len - 1 - size / 2, -size});
     }
 }

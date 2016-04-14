@@ -41,8 +41,8 @@ public class RectangleDrawTool extends AbstractMouseDrawTool {
         graphicsContext.drawRoundRectangle(
                 start.x + 1,
                 start.y + 1,
-                (end.x - start.x) + 1,
-                (end.y - start.y) + 1,
+                (end.x - start.x),
+                (end.y - start.y),
                 5,
                 5
         );

@@ -39,7 +39,7 @@ public class EllipseDrawTool extends AbstractMouseDrawTool {
         graphicsContext.setBackground(shadowColor);
         graphicsContext.setForeground(shadowColor);
 
-        graphicsContext.drawOval(start.x + 1, start.y + 1, (end.x - start.x) + 1, (end.y - start.y) + 1);
+        graphicsContext.drawOval(start.x + 1, start.y + 1, end.x - start.x, end.y - start.y);
 
         graphicsContext.setBackground(color);
         graphicsContext.setForeground(color);

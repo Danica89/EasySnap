@@ -22,6 +22,7 @@ package org.easysnap.main.shell.capturetool.imagedrawtool.mouse;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Transform;
 
 import java.util.ArrayList;
 
@@ -47,7 +48,12 @@ public class PencilDrawTool extends AbstractMouseDrawTool {
         for (int i = 0; i < pointArr.length; i++) {
             pointArr[i] = points.get(i);
         }
+        Transform transform = new Transform(graphicsContext.getDevice());
+        transform.translate(1,1);
+        graphicsContext.setTransform(transform);
         graphicsContext.drawPolyline(pointArr);
+        graphicsContext.setTransform(null);
+        transform.dispose();
         graphicsContext.setBackground(color);
         graphicsContext.setForeground(color);
         graphicsContext.drawPolyline(pointArr);
