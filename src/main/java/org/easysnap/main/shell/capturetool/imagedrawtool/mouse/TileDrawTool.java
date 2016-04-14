@@ -59,7 +59,6 @@ public class TileDrawTool extends AbstractMouseDrawTool {
             int endPosY = intersectRect.y + intersectRect.height;
             PaletteData palette = currentImageData.palette;
 
-            graphicsContext.setLineWidth(1);
             ArrayList<Rectangle> grid = new ArrayList<Rectangle>();
 
             for (int x = (startPosX - startPosX % lineWidth); x < endPosX + offset; x+= lineWidth) {
