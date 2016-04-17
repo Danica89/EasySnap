@@ -23,10 +23,12 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.*;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TileDrawTool extends AbstractMouseDrawTool {
     private int offset;
+    private HashMap<Integer, Map<Integer, Integer>> cachedPixelMap;
 
     public TileDrawTool(Image image, Color color, int size) {
         super(image, color, size);
@@ -35,6 +37,7 @@ public class TileDrawTool extends AbstractMouseDrawTool {
     @Override
     public synchronized Image onStart(MouseEvent event) {
         offset = (offset < 1) ? 9 : --offset;
+        cachedPixelMap = new HashMap<Integer, Map<Integer, Integer>>();
         return super.onStart(event);
     }
 
@@ -74,28 +77,43 @@ public class TileDrawTool extends AbstractMouseDrawTool {
             int x, y;
             RGB color;
             for (Rectangle rect : grid) {
-                color = new RGB(0,0,0);
-                for (int i = 0; i < rect.width; i++) {
-                    x = rect.x + i;
-                    for (int j = 0; j < rect.height; j++) {
-                        y = rect.y + j;
-                        int pixel = currentImageData.getPixel(x,y);
-                        RGB pixelColor = palette.getRGB(pixel);
-                        color.red += pixelColor.red;
-                        color.green += pixelColor.green;
-                        color.blue += pixelColor.blue;
+                Map<Integer, Integer> cachedPixelMapRow = cachedPixelMap.get(rect.x);
+                Integer cachedPixel = null;
+                if (null != cachedPixelMapRow) {
+                    cachedPixel = cachedPixelMapRow.get(rect.y);
+                }
+                if (null == cachedPixel) {
+                    color = new RGB(0, 0, 0);
+                    for (int i = 0; i < rect.width; i++) {
+                        x = rect.x + i;
+                        for (int j = 0; j < rect.height; j++) {
+                            y = rect.y + j;
+                            int pixel = currentImageData.getPixel(x, y);
+                            RGB pixelColor = palette.getRGB(pixel);
+                            color.red += pixelColor.red;
+                            color.green += pixelColor.green;
+                            color.blue += pixelColor.blue;
+                        }
+                    }
+                    double area = (double) rect.width * rect.height;
+                    color.red = (int) Math.min(255, ((double) color.red) / area);
+                    color.green = (int) Math.min(255, ((double) color.green) / area);
+                    color.blue = (int) Math.min(255, ((double) color.blue) / area);
+                    if (null == cachedPixelMapRow) {
+                        cachedPixelMapRow = new HashMap<Integer, Integer>();
+                        cachedPixelMap.put(rect.x, cachedPixelMapRow);
+                    }
+                    cachedPixel = palette.getPixel(color);
+                    if (lineWidth == rect.width && lineWidth == rect.height) {
+                        cachedPixelMapRow.put(rect.y, cachedPixel);
                     }
                 }
-                double area = (double) rect.width * rect.height;
-                color.red = (int) Math.min(255, ((double) color.red) / area);
-                color.green = (int) Math.min(255, ((double) color.green) / area);
-                color.blue = (int) Math.min(255, ((double) color.blue) / area);
 
                 for (int i = 0; i < rect.width; i++) {
                     x = (rect.x - startPosX) + i;
                     for (int j = 0; j < rect.height; j++) {
                         y = (rect.y - startPosY) + j;
-                        imageData.setPixel(x,y, palette.getPixel(color));
+                        imageData.setPixel(x,y, cachedPixel);
                     }
                 }
             }
