@@ -22,6 +22,7 @@ package org.easysnap.main.shell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.easysnap.EasySnap;
@@ -30,6 +31,7 @@ import org.easysnap.util.icon.IconManager;
 import org.easysnap.util.processor.Processor;
 
 public class TrayIconShell {
+    private final Display display;
     protected Shell shell;
     protected Image image;
     private Menu historyMenu = null;
@@ -42,9 +44,10 @@ public class TrayIconShell {
     private IconManager iconManager;
     private Processor processor;
 
-    public TrayIconShell(ClipboardManager clipboardManager, IconManager iconManager) throws Exception {
+    public TrayIconShell(ClipboardManager clipboardManager, IconManager iconManager, Display display) throws Exception {
         this.clipboardManager = clipboardManager;
         this.iconManager = iconManager;
+        this.display = display;
         initShell();
         initImage();
         initTray();
@@ -55,7 +58,7 @@ public class TrayIconShell {
     }
 
     private void initTray() throws Exception {
-        this.tray = Display.getCurrent().getSystemTray();
+        this.tray = display.getSystemTray();
         if (null == this.tray) {
             System.out.println("The system tray is not available");
             return;
@@ -181,11 +184,11 @@ public class TrayIconShell {
     }
 
     private void initImage() {
-        this.image = iconManager.getIconImage(32);
+        this.image = iconManager.getIconImage(64);
     }
 
     private void initShell() {
-        this.shell = new Shell(Display.getCurrent());
+        this.shell = new Shell(display);
         this.shell.addListener(SWT.Close, new Listener() {
             @Override
             public void handleEvent(Event event) {

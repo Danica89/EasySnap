@@ -23,10 +23,11 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 
 public class EllipseDrawTool extends AbstractMouseDrawTool {
-    public EllipseDrawTool(Image image, Color color, int size) {
-        super(image, color, size);
+    public EllipseDrawTool(Display display, Image image, Color color, int size) {
+        super(display, image, color, size);
     }
 
     @Override

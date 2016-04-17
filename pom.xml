@@ -74,7 +74,7 @@
                 <dependency>
                     <groupId>org.eclipse.swt</groupId>
                     <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
-                    <version>4.3</version>
+                    <version>4.5.2</version>
                 </dependency>
             </dependencies>
             <build>
@@ -93,7 +93,7 @@
                 <dependency>
                     <groupId>org.eclipse.swt</groupId>
                     <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
-                    <version>4.3</version>
+                    <version>4.5.2</version>
                 </dependency>
             </dependencies>
             <build>
@@ -112,7 +112,7 @@
                 <dependency>
                     <groupId>org.eclipse.swt</groupId>
                     <artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
-                    <version>4.3</version>
+                    <version>4.5.2</version>
                 </dependency>
             </dependencies>
             <build>
@@ -131,7 +131,7 @@
                 <dependency>
                     <groupId>org.eclipse.swt</groupId>
                     <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
-                    <version>4.3</version>
+                    <version>4.5.2</version>
                 </dependency>
             </dependencies>
             <build>
@@ -150,7 +150,7 @@
                 <dependency>
                     <groupId>org.eclipse.swt</groupId>
                     <artifactId>org.eclipse.swt.cocoa.macosx</artifactId>
-                    <version>4.3</version>
+                    <version>4.5.2</version>
                 </dependency>
             </dependencies>
             <build>
@@ -169,7 +169,7 @@
                 <dependency>
                     <groupId>org.eclipse.swt</groupId>
                     <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
-                    <version>4.3</version>
+                    <version>4.5.2</version>
                 </dependency>
             </dependencies>
             <build>
@@ -227,4 +227,10 @@
     <properties>
         <skipTests>true</skipTests>
     </properties>
+    <repositories>
+        <repository>
+            <id>maven-eclipse-repo</id>
+            <url>http://maven-eclipse.github.io/maven</url>
+        </repository>
+    </repositories>
 </project>

@@ -47,18 +47,20 @@ public class VideoCaptureTool extends AbstractCaptureTool {
     private int frameTimeInMs;
     private int i = 0;
     private Processor processor;
+    private final Display display;
 
-    public VideoCaptureTool(Processor processor) {
+    public VideoCaptureTool(Processor processor, Display display) {
         this.processor = processor;
+        this.display = display;
         init();
     }
 
     private void init() {
-        this.shell = new Shell(Display.getCurrent(), SWT.NO_TRIM | SWT.ON_TOP);
+        this.shell = new Shell(display, SWT.NO_TRIM | SWT.ON_TOP);
         this.shell.setLocation(0, 0);
         this.shell.forceActive();
         this.shell.forceFocus();
-        this.shell.setBounds(Display.getCurrent().getBounds());
+        this.shell.setBounds(display.getBounds());
         this.frames = new ArrayList<Image>();
         this.frameTimeInMs = (int) ((float) 1000 / (float) 25);
     }
@@ -66,7 +68,7 @@ public class VideoCaptureTool extends AbstractCaptureTool {
     @Override
     public void open(Rectangle rect) {
         this.rect = rect;
-        shell.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+        shell.setBackground(display.getSystemColor(SWT.COLOR_RED));
         shell.setLocation(0, 0);
         Region region = new Region();
         region.add(rect.x - 2, rect.y - 2, rect.width + 4, rect.height + 4);
@@ -145,7 +147,7 @@ public class VideoCaptureTool extends AbstractCaptureTool {
         Runnable timer = new Runnable() {
             public void run() {
                 long frameStartTime = System.currentTimeMillis();
-                Display current = Display.getCurrent();
+                Display current = display;
                 GC gc = new GC(current);
                 org.eclipse.swt.graphics.Image image = new org.eclipse.swt.graphics.Image(current, rect.width, rect.height);
                 gc.copyArea(image, rect.x, rect.y);
@@ -189,6 +191,6 @@ public class VideoCaptureTool extends AbstractCaptureTool {
                 }
             }
         };
-        Display.getCurrent().timerExec(frameTimeInMs, timer);
+        display.timerExec(frameTimeInMs, timer);
     }
 }

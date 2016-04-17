@@ -34,16 +34,16 @@ public class TextDrawTool extends AbstractKeyboardTool {
     private String lastStr = "";
     private Font font;
 
-    public TextDrawTool(Image image, Color color, int size) {
-        super(image, color, size);
-        font = new Font(Display.getDefault(), "Tahoma", size * 2 + 8, SWT.BOLD);
+    public TextDrawTool(Display display, Image image, Color color, int size) {
+        super(display, image, color, size);
+        font = new Font(display, "Tahoma", size * 2 + 8, SWT.BOLD);
     }
 
     @Override
     public void setSize(int size) {
         super.setSize(size);
         font.dispose();
-        font = new Font(Display.getDefault(), "Tahoma", size * 2 + 8, SWT.BOLD);
+        font = new Font(display, "Tahoma", size * 2 + 8, SWT.BOLD);
     }
 
     public void clear() {
@@ -86,7 +86,7 @@ public class TextDrawTool extends AbstractKeyboardTool {
 
         Color color = graphicsContext.getBackground();
 
-//        Path path = new Path(Display.getCurrent());
+//        Path path = new Path(display);
 //        path.addString(str, start.x, start.y, font);
 //        graphicsContext.setForeground(shadowColor);
 //        graphicsContext.setBackground(color);

@@ -23,10 +23,11 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 
 public class LineDrawTool extends AbstractMouseDrawTool {
-    public LineDrawTool(Image image, Color color, int size) {
-        super(image, color, size);
+    public LineDrawTool(Display display, Image image, Color color, int size) {
+        super(display, image, color, size);
     }
 
     @Override

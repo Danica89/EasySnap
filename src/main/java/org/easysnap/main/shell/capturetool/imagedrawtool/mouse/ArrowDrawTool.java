@@ -22,11 +22,12 @@ package org.easysnap.main.shell.capturetool.imagedrawtool.mouse;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Display;
 
 public class ArrowDrawTool extends AbstractMouseDrawTool {
 
-    public ArrowDrawTool(Image image, Color color, int size) {
-        super(image, color, size);
+    public ArrowDrawTool(Display display, Image image, Color color, int size) {
+        super(display, image, color, size);
     }
 
     @Override

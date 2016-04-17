@@ -21,6 +21,7 @@ package org.easysnap.main.shell.capturetool.imagedrawtool.mouse;
 
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Display;
 
 import java.util.ArrayList;
 
@@ -28,8 +29,8 @@ import java.util.ArrayList;
  * TODO: optymalizacja
  */
 public class BlurDrawTool extends AbstractMouseDrawTool {
-    public BlurDrawTool(Image image, Color color, int size) {
-        super(image, color, size);
+    public BlurDrawTool(Display display, Image image, Color color, int size) {
+        super(display, image, color, size);
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Display;
 
 abstract public class AbstractDrawTool {
     protected final Color shadowColor;
+    protected final Display display;
     protected GC graphicsContext;
     protected Image startImage;
     protected Image image;
@@ -41,11 +42,12 @@ abstract public class AbstractDrawTool {
     /**
      * TODO alpha and fill
      */
-    public AbstractDrawTool(Image image, Color color, int size/*, int alpha, boolean fill*/) {
+    public AbstractDrawTool(Display display, Image image, Color color, int size/*, int alpha, boolean fill*/) {
+        this.display = display;
         this.startImage = image;
         this.color = color;
         this.size = size;
-        this.shadowColor = new Color(Display.getCurrent(), 0, 0, 0);
+        this.shadowColor = new Color(this.display, 0, 0, 0);
 //        this.alpha = alpha;
 //        this.fill = fill;
     }
@@ -58,10 +60,15 @@ abstract public class AbstractDrawTool {
             this.image.dispose();
         }
         this.image = new Image(
-                Display.getCurrent(),
-                startImage,
-                SWT.IMAGE_COPY
+                display,
+                startImage.getImageData()
         );
+//        @FIXME: temporary fix
+//        this.image = new Image(
+//                display,
+//                startImage,
+//                SWT.IMAGE_COPY
+//        );
         this.graphicsContext = new GC(image);
         graphicsContext.setAdvanced(true);
         graphicsContext.setBackground(color);

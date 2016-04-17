@@ -23,10 +23,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.easysnap.main.shell.capturetool.imagedrawtool.AbstractDrawTool;
+import org.eclipse.swt.widgets.Display;
 
 abstract class AbstractKeyboardTool extends AbstractDrawTool {
-    AbstractKeyboardTool(Image image, Color color, int size) {
-        super(image, color, size);
+    AbstractKeyboardTool(Display display, Image image, Color color, int size) {
+        super(display, image, color, size);
     }
 
     abstract public Image onType(KeyEvent event);

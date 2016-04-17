@@ -32,6 +32,7 @@ import org.easysnap.main.shell.capturetool.AbstractCaptureTool;
 
 public class ScreenSelectorShell {
 
+    private final Display display;
     protected Shell shell;
     private int startX = -1;
     private int endX = -1;
@@ -42,7 +43,8 @@ public class ScreenSelectorShell {
     private AbstractCaptureTool panel;
     private long nextDraw = 0;
 
-    public ScreenSelectorShell() {
+    public ScreenSelectorShell(Display display) {
+        this.display = display;
         init();
     }
 
@@ -54,31 +56,33 @@ public class ScreenSelectorShell {
     }
 
     private void initShellPaintListener() {
-        this.shell.addPaintListener(new PaintListener() {
+        shell.addPaintListener(new PaintListener() {
             @Override
-            public void paintControl(PaintEvent paintEvent) {
-                if (ScreenSelectorShell.this.clicked) {
-                    ScreenSelectorShell.this.shell.setRegion(ScreenSelectorShell.this.getRegion(true));
-                    Rectangle rect = ScreenSelectorShell.this.getRect();
-                    paintEvent.gc.drawRectangle(rect.x - 1, rect.y - 1, rect.width + 1, rect.height + 1);
-                    Display display = Display.getCurrent();
-                    paintEvent.gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-                    paintEvent.gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_RED));
-                    paintEvent.gc.drawText(rect.width + " x " + rect.height, rect.x - 1, rect.y - 17);
+            public void paintControl(PaintEvent e) {
+                if (clicked) {
+                    Rectangle rect = getRect();
+                    e.gc.setBackground(display.getSystemColor(SWT.COLOR_RED));
+                    e.gc.setAlpha(64);
+                    e.gc.fillRectangle(rect);
+                    e.gc.setAlpha(128);
+                    e.gc.drawRectangle(rect.x - 1, rect.y - 1, rect.width + 1, rect.height + 1);
+                    e.gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+                    e.gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_RED));
+                    e.gc.drawText(rect.width + " x " + rect.height, rect.x - 1, rect.y - 17);
                 }
             }
         });
     }
 
     private void initShellMouseMoveListener() {
-        this.shell.addMouseMoveListener(new MouseMoveListener() {
+        shell.addMouseMoveListener(new MouseMoveListener() {
             @Override
             public void mouseMove(MouseEvent mouseEvent) {
                 if (nextDraw < System.nanoTime()) {
-                    if (ScreenSelectorShell.this.clicked) {
-                        ScreenSelectorShell.this.endX = mouseEvent.x;
-                        ScreenSelectorShell.this.endY = mouseEvent.y;
-                        ScreenSelectorShell.this.shell.redraw();
+                    if (clicked) {
+                        endX = mouseEvent.x;
+                        endY = mouseEvent.y;
+                        shell.redraw();
                     }
                     nextDraw = System.nanoTime() + (1000 * 1000 * 1000 / 60);
                 }
@@ -87,7 +91,7 @@ public class ScreenSelectorShell {
     }
 
     private void initShellCloseListener() {
-        this.shell.addListener(SWT.Close, new Listener() {
+        shell.addListener(SWT.Close, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 shell.dispose();
@@ -96,39 +100,39 @@ public class ScreenSelectorShell {
     }
 
     private void initShellMouseListener() {
-        this.shell.addMouseListener(new MouseListener() {
+        shell.addMouseListener(new MouseListener() {
             @Override
-            public void mouseDoubleClick(MouseEvent mouseEvent) {
+            public void mouseDoubleClick(MouseEvent e) {
             }
 
             @Override
-            public void mouseDown(MouseEvent mouseEvent) {
-                if (mouseEvent.button != 1) {
+            public void mouseDown(MouseEvent e) {
+                if (e.button != 1) {
                     return;
                 }
-                ScreenSelectorShell.this.startX = mouseEvent.x;
-                ScreenSelectorShell.this.startY = mouseEvent.y;
-                ScreenSelectorShell.this.clicked = true;
+                startX = e.x;
+                startY = e.y;
+                clicked = true;
             }
 
             @Override
-            public void mouseUp(MouseEvent mouseEvent) {
-                if (mouseEvent.button != 1) {
+            public void mouseUp(MouseEvent e) {
+                if (e.button != 1) {
                     return;
                 }
-                ScreenSelectorShell.this.close();
-                ScreenSelectorShell.this.endX = mouseEvent.x;
-                ScreenSelectorShell.this.endY = mouseEvent.y;
-                Display.getCurrent().asyncExec(new Runnable() {
+                close();
+                endX = e.x;
+                endY = e.y;
+                display.asyncExec(new Runnable() {
                     @Override
                     public void run() {
+                        Rectangle rect = getRect();
                         try {
                             Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
                         }
-                        Rectangle rect = ScreenSelectorShell.this.getRect();
-                        ScreenSelectorShell.this.panel.open(rect);
+                        panel.open(rect);
                     }
                 });
             }
@@ -141,42 +145,39 @@ public class ScreenSelectorShell {
     }
 
     private void initShell() {
-        this.shell = new Shell(Display.getCurrent(), SWT.ON_TOP | SWT.NO_TRIM | SWT.APPLICATION_MODAL);
-        this.shell.setLocation(0, 0);
-        this.shell.setVisible(false);
-        this.shell.forceActive();
-        this.shell.forceFocus();
-        Display display = Display.getCurrent();
-        this.shell.setBounds(display.getBounds());
-        this.shell.setAlpha(0x55);
-        this.shell.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
-        this.shell.setCursor(new Cursor(display, SWT.CURSOR_CROSS));
+        shell = new Shell(display.getActiveShell(), SWT.ON_TOP | SWT.DOUBLE_BUFFERED);
+        shell.setLocation(0, 0);
+        shell.setVisible(false);
+        shell.setBounds(display.getBounds());
+        shell.setAlpha(0x55);
+        shell.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
+        shell.setCursor(new Cursor(display, SWT.CURSOR_CROSS));
     }
 
     private Rectangle getRect() {
         int x, y, width, height;
-        if (this.startX > this.endX) {
-            x = this.endX;
-            width = this.startX - this.endX;
+        if (startX > endX) {
+            x = endX;
+            width = startX - endX;
         } else {
-            x = this.startX;
-            width = this.endX - this.startX;
+            x = startX;
+            width = endX - startX;
         }
-        if (this.startY > this.endY) {
-            y = this.endY;
-            height = this.startY - this.endY;
+        if (startY > endY) {
+            y = endY;
+            height = startY - endY;
         } else {
-            y = this.startY;
-            height = this.endY - this.startY;
+            y = startY;
+            height = endY - startY;
         }
         return new Rectangle(Math.max(0, x), Math.max(0, y), Math.max(1, width), Math.max(1, height));
     }
 
     private Region getRegion(boolean subRect) {
         Region region = new Region();
-        region.add(this.shell.getBounds());
+        region.add(shell.getBounds());
         if (subRect) {
-            region.subtract(this.getRect());
+            region.subtract(getRect());
         }
         return region;
     }
@@ -186,13 +187,15 @@ public class ScreenSelectorShell {
     }
 
     public void open() {
-        this.shell.setBounds(Display.getCurrent().getBounds());
-        this.shell.setVisible(true);
+        shell.setCapture(true);
+        shell.forceActive();
+        shell.forceFocus();
+        shell.setBounds(display.getBounds());
+        shell.setVisible(true);
     }
 
     public void close() {
-        this.shell.setVisible(false);
-        this.clicked = false;
-        this.shell.setRegion(ScreenSelectorShell.this.getRegion(false));
+        shell.setVisible(false);
+        clicked = false;
     }
 }

@@ -30,6 +30,7 @@ import org.easysnap.util.ftp.FtpClient;
 import org.easysnap.util.icon.IconManager;
 
 public class SettingsShell {
+    private final Display display;
     private Config config;
     private FtpClient client;
     private IconManager iconManager;
@@ -42,10 +43,11 @@ public class SettingsShell {
     private Text urlField;
     private Text savePathField;
 
-    public SettingsShell(Config config, FtpClient client, IconManager iconManager) {
+    public SettingsShell(Config config, FtpClient client, IconManager iconManager, Display display) {
         this.config = config;
         this.client = client;
         this.iconManager = iconManager;
+        this.display = display;
         this.prepareShell();
         this.prepareForm();
         this.loadConfiguration();
@@ -57,7 +59,7 @@ public class SettingsShell {
     }
 
     private void prepareShell() {
-        this.shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM & (~SWT.RESIZE));
+        this.shell = new Shell(display, SWT.SHELL_TRIM & (~SWT.RESIZE));
         this.shell.setText("EasySnap Settings");
         this.shell.setImages(iconManager.getIconImages());
         this.shell.setMinimumSize(300, 100);

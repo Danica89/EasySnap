@@ -39,6 +39,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 public class ImageCaptureTool extends AbstractCaptureTool {
+    private final Display display;
     protected Shell shell;
     protected Image image;
     protected Color color;
@@ -56,14 +57,15 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     private IconManager iconManager;
     private Processor processor;
 
-    public ImageCaptureTool(Config config, IconManager iconManager, Processor processor) {
+    public ImageCaptureTool(Config config, IconManager iconManager, Processor processor, Display display) {
         this.config = config;
         this.iconManager = iconManager;
         this.processor = processor;
-        this.color = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
+        this.color = display.getSystemColor(SWT.COLOR_RED);
         this.size = 8;
         this.historyManager = new HistoryManager();
         this.resourceManager = new ResourceManager();
+        this.display = display;
     }
 
     public void open(Rectangle rect) {
@@ -77,7 +79,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
 
     private void fitSize() {
         Point shellSize = this.shell.getSize();
-        Rectangle clientArea = Display.getCurrent().getPrimaryMonitor().getBounds();
+        Rectangle clientArea = display.getPrimaryMonitor().getBounds();
         Point diff = new Point(0, 0);
         if (shellSize.x > clientArea.width) {
             diff.x = shellSize.x - clientArea.width;
@@ -92,8 +94,17 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     }
 
     private void fitLocation() {
-        Monitor primary = Display.getCurrent().getPrimaryMonitor();
-        Rectangle bounds = primary.getBounds();
+        Monitor current = null;
+        for (Monitor monitor : display.getMonitors()) {
+            if (monitor.getBounds().contains(display.getCursorLocation())) {
+                current = monitor;
+                break;
+            }
+        }
+        if (null == current) {
+            display.getPrimaryMonitor();
+        }
+        Rectangle bounds = current.getBounds();
         Rectangle rect = this.shell.getBounds();
 
         int x = bounds.x + (bounds.width - rect.width) / 2;
@@ -116,9 +127,9 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     private void preSetupShell() {
         loadConfiguration();
 
-        GC gc = new GC(Display.getCurrent());
+        GC gc = new GC(display);
         this.resourceManager.add(gc);
-        this.image = new Image(Display.getCurrent(), this.rect.width, this.rect.height);
+        this.image = new Image(display, this.rect.width, this.rect.height);
         gc.copyArea(this.image, rect.x, rect.y);
         gc.dispose();
         this.historyManager.add(image);
@@ -129,7 +140,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     }
 
     private void setupShell() {
-        this.shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
+        this.shell = new Shell(display, SWT.SHELL_TRIM);
         GridLayout layout = new GridLayout();
         this.shell.setLayout(layout);
         this.shell.setMinimumSize(400, 200);
@@ -152,7 +163,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     }
 
     private Image getColorImage() {
-        Image image = new Image(Display.getCurrent(), 24, 24);
+        Image image = new Image(display, 24, 24);
         resourceManager.add(image);
         GC gc = new GC(image);
         gc.setBackground(color);
@@ -162,7 +173,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     }
 
     private void loadConfiguration() {
-        this.color = new Color(Display.getCurrent(), config.getColorR(), config.getColorG(), config.getColorB());
+        this.color = new Color(display, config.getColorR(), config.getColorG(), config.getColorB());
         this.resourceManager.add(this.color);
         this.size = config.getSize();
     }
@@ -182,7 +193,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
                 colorDialog.setText("Choose a Color");
                 RGB rgb = colorDialog.open();
                 if (rgb != null) {
-                    color = new Color(Display.getCurrent(), rgb);
+                    color = new Color(display, rgb);
                     drawToolManager.setColor(color);
                     resourceManager.add(color);
                     colorBtn.setImage(getColorImage());
@@ -387,7 +398,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     }
 
     private void setupTopToolBar() {
-        Display.getCurrent().addFilter(SWT.KeyDown, new Listener() {
+        display.addFilter(SWT.KeyDown, new Listener() {
             public void handleEvent(Event e) {
                 if (((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 'z')) {
                     doUndo();
@@ -473,7 +484,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         imageScrolledComposite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true));
         imageScrolledComposite.setExpandVertical(true);
         imageScrolledComposite.setExpandHorizontal(true);
-        canvas = new Canvas(imageScrolledComposite, SWT.NONE);
+        canvas = new Canvas(imageScrolledComposite, SWT.DOUBLE_BUFFERED);
         imageScrolledComposite.setMinSize(image.getBounds().width, image.getBounds().height);
         imageScrolledComposite.setContent(canvas);
 
@@ -527,12 +538,14 @@ public class ImageCaptureTool extends AbstractCaptureTool {
 
                 if (drawTool instanceof TextDrawTool) {
                     try {
-                        image = new Image(Display.getCurrent(), ((TextDrawTool) drawTool).onType(keyEvent), SWT.IMAGE_COPY);
+                        image = new Image(display, ((TextDrawTool) drawTool).onType(keyEvent).getImageData());
+//                        @FIXME temporary fix
+//                        image = new Image(display, ((TextDrawTool) drawTool).onType(keyEvent), SWT.IMAGE_COPY);
                         historyManager.add(image);
                         drawTool.setStartImage(image);
                         redrawImage();
-                    } catch (Exception ignored) {
-
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
                     }
                 }
             }
@@ -573,7 +586,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
                 if (drawTool == null) {
                     return;
                 }
-                cursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+                cursor = new Cursor(display, SWT.CURSOR_HAND);
                 shell.setCursor(cursor);
                 image = drawTool.onStart(mouseEvent);
                 resourceManager.add(image);
@@ -586,7 +599,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
                     return;
                 }
                 Cursor oldCursor = cursor;
-                cursor = new Cursor(Display.getCurrent(), SWT.CURSOR_ARROW);
+                cursor = new Cursor(display, SWT.CURSOR_ARROW);
                 shell.setCursor(cursor);
                 if (!oldCursor.isDisposed()) {
                     oldCursor.dispose();
@@ -710,15 +723,15 @@ public class ImageCaptureTool extends AbstractCaptureTool {
 
         DrawToolManager(Image image, Color color, int size) {
             list = new EnumMap<DrawToolType, AbstractDrawTool>(DrawToolType.class);
-            list.put(DrawToolType.TEXT, new TextDrawTool(image, color, size));
-            list.put(DrawToolType.ARROW, new ArrowDrawTool(image, color, size));
-            list.put(DrawToolType.PENCIL, new PencilDrawTool(image, color, size));
-            list.put(DrawToolType.LINE, new LineDrawTool(image, color, size));
-            list.put(DrawToolType.RECTANGLE, new RectangleDrawTool(image, color, size));
-            list.put(DrawToolType.ELLIPSE, new EllipseDrawTool(image, color, size));
-            list.put(DrawToolType.BLUR, new BlurDrawTool(image, color, size));
-            list.put(DrawToolType.TILE, new TileDrawTool(image, color, size));
-            list.put(DrawToolType.CROP, new CropDrawTool(image, color, size));
+            list.put(DrawToolType.TEXT, new TextDrawTool(display, image, color, size));
+            list.put(DrawToolType.ARROW, new ArrowDrawTool(display, image, color, size));
+            list.put(DrawToolType.PENCIL, new PencilDrawTool(display, image, color, size));
+            list.put(DrawToolType.LINE, new LineDrawTool(display, image, color, size));
+            list.put(DrawToolType.RECTANGLE, new RectangleDrawTool(display, image, color, size));
+            list.put(DrawToolType.ELLIPSE, new EllipseDrawTool(display, image, color, size));
+            list.put(DrawToolType.BLUR, new BlurDrawTool(display, image, color, size));
+            list.put(DrawToolType.TILE, new TileDrawTool(display, image, color, size));
+            list.put(DrawToolType.CROP, new CropDrawTool(display, image, color, size));
         }
 
         public void setSize(int size) {

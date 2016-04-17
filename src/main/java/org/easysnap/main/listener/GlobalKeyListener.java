@@ -40,11 +40,13 @@ public class GlobalKeyListener implements NativeKeyListener {
     private static Config config;
     private static IconManager iconManager;
     private static Processor processor;
+    private static Display display;
 
-    public static void init(Config config, IconManager iconManager, Processor processor) {
+    public static void init(Config config, IconManager iconManager, Processor processor, final Display display) {
         setConfig(config);
         setIconManager(iconManager);
         setProcessor(processor);
+        setDisplay(display);
         setupLogs();
         try {
             GlobalScreen.registerNativeHook();
@@ -55,14 +57,18 @@ public class GlobalKeyListener implements NativeKeyListener {
             System.exit(1);
         }
 
-        Display.getDefault().asyncExec(new Runnable() {
+        display.asyncExec(new Runnable() {
             @Override
             public void run() {
-                screenSelectorShell = new ScreenSelectorShell();
+                screenSelectorShell = new ScreenSelectorShell(display);
             }
         });
 
         GlobalScreen.addNativeKeyListener(new GlobalKeyListener());
+    }
+
+    private static void setDisplay(Display display) {
+        GlobalKeyListener.display = display;
     }
 
     private static void setupLogs() {
@@ -92,10 +98,10 @@ public class GlobalKeyListener implements NativeKeyListener {
                 && ((e.getModifiers() & NativeKeyEvent.SHIFT_L_MASK) == NativeKeyEvent.SHIFT_L_MASK ||
                 (e.getModifiers() & NativeKeyEvent.SHIFT_R_MASK) == NativeKeyEvent.SHIFT_R_MASK
         )) {
-            Display.getDefault().asyncExec(new Runnable() {
+            display.asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    screenSelectorShell.setPanel(new VideoCaptureTool(processor));
+                    screenSelectorShell.setPanel(new VideoCaptureTool(processor, display));
                     screenSelectorShell.open();
                 }
             });
@@ -103,25 +109,25 @@ public class GlobalKeyListener implements NativeKeyListener {
             if ((e.getModifiers() & NativeKeyEvent.CTRL_L_MASK) == NativeKeyEvent.CTRL_L_MASK ||
                     (e.getModifiers() & NativeKeyEvent.CTRL_R_MASK) == NativeKeyEvent.CTRL_R_MASK
                     ) {
-                Display.getDefault().asyncExec(new Runnable() {
+                display.asyncExec(new Runnable() {
                     @Override
                     public void run() {
-                        ImageCaptureTool imageCaptureTool = new ImageCaptureTool(config, iconManager, processor);
-                        imageCaptureTool.open(Display.getDefault().getBounds());
+                        ImageCaptureTool imageCaptureTool = new ImageCaptureTool(config, iconManager, processor, display);
+                        imageCaptureTool.open(display.getBounds());
                     }
                 });
                 return;
             }
-            Display.getDefault().asyncExec(new Runnable() {
+            display.asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    screenSelectorShell.setPanel(new ImageCaptureTool(config, iconManager, processor));
+                    screenSelectorShell.setPanel(new ImageCaptureTool(config, iconManager, processor, display));
                     screenSelectorShell.open();
                 }
             });
         }
         if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-            Display.getDefault().asyncExec(new Runnable() {
+            display.asyncExec(new Runnable() {
                 @Override
                 public void run() {
                     screenSelectorShell.close();

@@ -25,8 +25,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 
 public class CropDrawTool extends AbstractMouseDrawTool {
-    public CropDrawTool(Image image, Color color, int size) {
-        super(image, color, size);
+    public CropDrawTool(Display display, Image image, Color color, int size) {
+        super(display, image, color, size);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class CropDrawTool extends AbstractMouseDrawTool {
             image.dispose();
             graphicsContext.dispose();
             image = new Image(
-                    Display.getCurrent(),
+                    display,
                     intersectedRectangle.width,
                     intersectedRectangle.height
             );

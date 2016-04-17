@@ -29,7 +29,11 @@ import org.easysnap.util.ftp.FtpClient;
 import org.easysnap.util.icon.IconManager;
 import org.easysnap.util.processor.Processor;
 import org.easysnap.util.tooltip.ToolTipManager;
-import org.eclipse.swt.widgets.Monitor;
+
+import java.io.IOException;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 
 public class EasySnap {
     private static Config config;
@@ -41,13 +45,16 @@ public class EasySnap {
     private static ToolTipManager toolTipManager;
     private static FtpClient client;
     private static Processor processor;
+    private static Display display;
+    private static ServerSocket socket;
 
     public static SettingsShell getSettingsShell() {
         return settingsShell;
     }
 
     public static void main(String[] args) throws Exception {
-        Display.setAppName("EasySnap");
+        checkIfRunning();
+        initDisplay();
         initConfig();
         initClipboardManager();
         initIconManager();
@@ -59,6 +66,26 @@ public class EasySnap {
         initSettingsShell();
 
         run();
+    }
+
+    private static void checkIfRunning() {
+        try {
+            socket = new ServerSocket(35790, 0, InetAddress.getByAddress(new byte[] {127,0,0,1}));
+        }
+        catch (BindException e) {
+            System.err.println("Already running.");
+            System.exit(1);
+        }
+        catch (IOException e) {
+            System.err.println("Unexpected error.");
+            e.printStackTrace();
+            System.exit(2);
+        }
+    }
+
+    private static void initDisplay() {
+        Display.setAppName("EasySnap");
+        display = new Display();
     }
 
     private static void initProcessor() {
@@ -87,7 +114,6 @@ public class EasySnap {
     }
 
     private static void run() {
-        Display display = Display.getCurrent();
         while (!display.isDisposed()) {
             try {
                 if (!display.readAndDispatch()) {
@@ -100,17 +126,17 @@ public class EasySnap {
     }
 
     private static void initSettingsShell() {
-        settingsShell = new SettingsShell(config, client, iconManager);
+        settingsShell = new SettingsShell(config, client, iconManager, display);
         if (config.isInitial()) {
             settingsShell.show();
         }
     }
 
     private static void initGlobalKeyListener() {
-        GlobalKeyListener.init(config, iconManager, processor);
+        GlobalKeyListener.init(config, iconManager, processor, display);
     }
 
     private static void initTrayIcon() throws Exception {
-        trayIconShell = new TrayIconShell(clipboardManager, iconManager);
+        trayIconShell = new TrayIconShell(clipboardManager, iconManager, display);
     }
 }
