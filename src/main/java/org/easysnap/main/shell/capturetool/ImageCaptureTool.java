@@ -79,7 +79,8 @@ public class ImageCaptureTool extends AbstractCaptureTool {
 
     private void fitSize() {
         Point shellSize = this.shell.getSize();
-        Rectangle clientArea = display.getPrimaryMonitor().getBounds();
+        Monitor current = getCurrentMonitor();
+        Rectangle clientArea = current.getBounds();
         Point diff = new Point(0, 0);
         if (shellSize.x > clientArea.width) {
             diff.x = shellSize.x - clientArea.width;
@@ -94,6 +95,17 @@ public class ImageCaptureTool extends AbstractCaptureTool {
     }
 
     private void fitLocation() {
+        Monitor current = getCurrentMonitor();
+        Rectangle bounds = current.getBounds();
+        Rectangle rect = this.shell.getBounds();
+
+        int x = bounds.x + (bounds.width - rect.width) / 2;
+        int y = bounds.y + (bounds.height - rect.height) / 2;
+
+        this.shell.setLocation(x, y);
+    }
+
+    private Monitor getCurrentMonitor() {
         Monitor current = null;
         for (Monitor monitor : display.getMonitors()) {
             if (monitor.getBounds().contains(display.getCursorLocation())) {
@@ -104,13 +116,7 @@ public class ImageCaptureTool extends AbstractCaptureTool {
         if (null == current) {
             display.getPrimaryMonitor();
         }
-        Rectangle bounds = current.getBounds();
-        Rectangle rect = this.shell.getBounds();
-
-        int x = bounds.x + (bounds.width - rect.width) / 2;
-        int y = bounds.y + (bounds.height - rect.height) / 2;
-
-        this.shell.setLocation(x, y);
+        return current;
     }
 
     private void fitSizeAndLocation() {
